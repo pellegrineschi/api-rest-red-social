@@ -21,6 +21,13 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
 // cargar conf de rutas
+const userRoutes = require("./routes/user.routes");
+const publicationRoutes = require("./routes/publication.routes");
+const followRoutes = require("./routes/follow.routes");
+
+app.use("/api/user", userRoutes);
+app.use("/api/publication", publicationRoutes);
+app.use("/api/follow", followRoutes);
 
 //ruta de prueba
 app.get("/ruta-prueba", async (req, res)=>{
