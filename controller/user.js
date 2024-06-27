@@ -1,8 +1,6 @@
 //importar dependencias y modulos
-const User = require('../model/user.model');
-const bcrypt = require('bcrypt');
-
-
+const User = require("../model/user.model");
+const bcrypt = require("bcrypt");
 
 const pruebaUser = async (req, res) => {
   try {
@@ -13,6 +11,8 @@ const pruebaUser = async (req, res) => {
     console.log(error);
   }
 };
+
+//----------------------------------------------------------//
 
 //verificar usuarios duplicados
 const checkUser = async (userToSave) => {
@@ -27,13 +27,21 @@ const checkUser = async (userToSave) => {
   }
 };
 
+//----------------------------------------------------------//
+
 //registro de usuarios
 const register = async (req, res) => {
   //tomas datos de la peticion
   let params = req.body;
 
   //comprobar que lleguen bien los datos(+validacion)
-  if (!params.name || !params.email || !params.nick || !params.password || !params.surname) {
+  if (
+    !params.name ||
+    !params.email ||
+    !params.nick ||
+    !params.password ||
+    !params.surname
+  ) {
     return res.status(400).json({
       status: "error",
       massage: "faltan datos por enviar",
@@ -66,7 +74,7 @@ const register = async (req, res) => {
         return res.status(200).json({
           status: "sucess",
           message: "usuario guardado con exito",
-          user: userToSave
+          user: userToSave,
         });
       } catch (error) {
         return res.status(400).json({
@@ -77,7 +85,6 @@ const register = async (req, res) => {
     };
 
     await savedUser(userToSave);
-
   } catch (error) {
     console.log(error);
     return res.status(500).json({
@@ -87,17 +94,59 @@ const register = async (req, res) => {
   }
 };
 
-const login = (req, res)=>{
-  return res.status(200).json({
-    status:"sucess",
-    message:"accion de login"
-  })
-}
+//------------------------------------------------------------//
+
+const login = async (req, res) => {
+  //tomas datos de la peticion
+  let params = req.body;
+
+  //comprobar que lleguen bien los datos(+validacion)
+  if (!params.email || !params.password) {
+    return res.status(400).json({
+      status: "error",
+      massage: "faltan datos por enviar",
+    });
+  }
+
+  //buscar en la bbdd si existe
+
+  try {
+    const userExist = await User.findOne({
+      $or: [{ email: params.email }],
+    }).select({"password":0,"role":0});// lo que no quiero que me devuleva
+
+    if (!userExist) {
+      return res.status(200).json({
+        status: "succes",
+        message: "el usuario no existe",
+      });
+    }
+
+    return res.status(200).json({
+      status: "sucess",
+      message: "accion de login",
+      userExist
+    });
+
+    //comprobar contraseña
+
+    bcrypt.compare
+
+    //devolver token
+
+    //devolder datos de usuario
+  } catch (error) {
+    return res.status(400).json({
+      status: "error",
+      message: "error en login",
+    });
+  }
+};
 
 //exportar aciones
 
 module.exports = {
   pruebaUser,
   register,
-  login
+  login,
 };
