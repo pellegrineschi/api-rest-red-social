@@ -1,6 +1,8 @@
 //importar dependencias y modulos
-const User = require("../model/user");
-const bcrypt = require("bcrypt");
+const User = require('../model/user.model');
+const bcrypt = require('bcrypt');
+
+
 
 const pruebaUser = async (req, res) => {
   try {
@@ -85,9 +87,17 @@ const register = async (req, res) => {
   }
 };
 
-//esportar aciones
+const login = (req, res)=>{
+  return res.status(200).json({
+    status:"sucess",
+    message:"accion de login"
+  })
+}
+
+//exportar aciones
 
 module.exports = {
   pruebaUser,
   register,
+  login
 };
