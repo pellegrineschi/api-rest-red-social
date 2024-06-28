@@ -113,7 +113,7 @@ const login = async (req, res) => {
   try {
     const userExist = await User.findOne({
       $or: [{ email: params.email }],
-    }).select({"password":0,"role":0});// lo que no quiero que me devuleva
+    }).select({"create_at":0});// lo que no quiero que me devuleva
 
     if (!userExist) {
       return res.status(200).json({
@@ -122,19 +122,29 @@ const login = async (req, res) => {
       });
     }
 
+    //comprobar contraseña
+
+    let pwd = bcrypt.compare(params.password, userExist.password); 
+
+    if(!pwd){
+      return res.status(400).json({
+        status: "error",
+        message: "usuario o cantraseña incorrectos"
+      })
+
+    }
+    //devolver token
+
+    //devolder datos de usuario
+
     return res.status(200).json({
       status: "sucess",
       message: "accion de login",
       userExist
     });
 
-    //comprobar contraseña
-
-    bcrypt.compare
-
-    //devolver token
-
-    //devolder datos de usuario
+    
+    
   } catch (error) {
     return res.status(400).json({
       status: "error",
